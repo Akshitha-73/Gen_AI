@@ -1,0 +1,81 @@
+Prompt engineering is the process of designing high-quality prompts that guide Large Language Models (LLMs) to produce accurate outputs. A prompt is the input provided to the model to generate a response or prediction, sometimes accompanied by other modalities like image prompts
+
+How LLMs work and why prompt engineering is important: An LLM functions as a prediction engine, taking sequential text as input and predicting the next token based on its training data. 
+
+Prompt engineering is crucial because crafting effective prompts is complex, and many factors like the model used, its training data, configurations, word-choice, style, tone, structure, and context all influence efficacy. Inadequate prompts can lead to ambiguous or inaccurate responses and hinder the model's ability to provide meaningful output.
+
+ It is an iterative process of tinkering to find the best prompt, optimizing its length, and evaluating its writing style and structure relative to the task
+
+LLM Output Configuration: Beyond the prompt itself, effective prompt engineering involves optimally setting various LLM configuration options that control the output. These include:
+
+1. Output Length Controls the number of tokens generated, which impacts computation, energy consumption, response     times, and costs. It causes the LLM to stop predicting tokens once a limit is reached, rather than making it more succinct
+
+2. Sampling Controls Determine how predicted token probabilities are processed to choose the next output token7. The most common settings are:
+
+a. Temperature Controls the degree of randomness in token selection9. Lower temperatures (e.g., 0 for greedy decoding) result in more deterministic responses, while higher temperatures lead to more diverse or unexpected results910.
+
+b. Top-K Selects the top K most likely tokens from the model's predicted distribution11. A higher Top-K increases creativity and variety, while a lower Top-K makes the output more restrictive and factual11. A Top-K of 1 is equivalent to greedy decoding11.
+
+c. Top-P (nucleus sampling) Selects tokens whose cumulative probability does not exceed a certain value (P)11. Values range from 0 (greedy decoding) to 1 (all tokens in the LLM's vocabulary)12.
+
+d. Combination When temperature, Top-K, and Top-P are all available, tokens meeting both Top-K and Top-P criteria become candidates, and then temperature is applied for sampling13. Extreme settings of one sampling configuration can make others irrelevant (e.g., temperature 0 makes Top-K and Top-P irrelevant; Top-K of 1 makes temperature and Top-P irrelevant)1415. For general creative yet coherent results, a starting point might be temperature .2, Top-P .95, and Top-K 3016. For tasks with a single correct answer, a temperature of 0 is recommended16.
+Prompting Techniques: The whitepaper discusses several techniques to help LLMs generate relevant results1718:
+
+3. General Prompting / Zero-shot The simplest type, providing only a task description and initial text without examples19.
+
+4. One-shot & Few-shot Provides examples to help the model understand and mimic the desired output structure or pattern20. One-shot gives a single example, while few-shot provides multiple examples, typically three to five for general tasks2021. Examples should be relevant, diverse, high-quality, and include edge cases22.
+
+5. System Prompting Sets the overall context and purpose, defining the model's fundamental capabilities and overarching purpose (e.g., specifying output format like JSON)23.... It can also be used for safety and toxicity control28.
+
+6. Contextual Prompting Provides specific details or background information relevant to the current conversation or task, helping the model understand nuances and tailor responses dynamically23....
+
+7. Role Prompting Assigns a specific character or identity for the LLM to adopt (e.g., travel guide, book editor), framing its output style and voice23....
+
+8. Step-back Prompting Improves performance by first prompting the LLM to consider a general question related to the specific task, then feeding that answer into a subsequent prompt31. This allows the LLM to activate relevant background knowledge and reasoning, generating more accurate and insightful responses3233.
+
+9. Chain of Thought (CoT) Improves reasoning by generating intermediate reasoning steps, leading to more accurate answers, especially for complex tasks34. It is low-effort, effective with off-the-shelf LLMs, and provides interpretability35. However, it results in more output tokens, increasing cost and time36. For CoT, the temperature should typically be set to 0, and the answer should appear after the reasoning37.
+
+10. Self-consistency Combines sampling and majority voting to generate diverse reasoning paths and select the most consistent answer, improving accuracy and coherence38. It involves sending the same prompt multiple times with a high temperature to generate different reasoning paths, extracting answers, and choosing the most common one3940.
+
+11. Tree of Thoughts (ToT) Generalizes CoT by allowing LLMs to explore multiple different reasoning paths simultaneously, maintaining a tree of thoughts where each thought is an intermediate step4142. This is well-suited for complex tasks requiring exploration42.
+
+12. ReAct (Reason & Act) A paradigm enabling LLMs to solve complex tasks by combining natural language reasoning with external tools (like search or code interpreters)43. It mimics human operation by creating a thought-action loop where the LLM reasons, plans, acts, observes results, and updates its reasoning44.
+
+14. Automatic Prompt Engineering (APE) A method to automate prompt writing by having a model generate prompts, evaluate them using metrics like BLEU or ROUGE, and select the best ones45....
+
+15. Code Prompting Gemini can assist developers by writing, explaining, translating, debugging, and reviewing code in various programming languages47....
+
+
+Best Practices: To become proficient in prompt engineering, several best practices are recommended5152:
+
+1. Provide Examples Especially one-shot or few-shot examples, to teach the model desired outputs, improving accuracy, style, and tone52.
+
+2. Design with Simplicity Prompts should be concise, clear, and easy to understand, avoiding complex language and unnecessary information53. Use strong verbs describing the action54.
+
+3. Be Specific about the Output Provide detailed instructions to guide the LLM precisely, improving overall accuracy55.
+
+4. Use Instructions over Constraints Focus on positive instructions stating what the model should do, rather than what it should not do5657. Constraints can limit creativity and may clash57.
+
+5. Control Max Token Length Set a maximum token limit in configurations or explicitly request a specific length in the prompt58.
+
+6. Use Variables in Prompts To make prompts dynamic and reusable, incorporate variables that can be changed for different inputs58.
+
+7. Experiment with Input Formats and Writing Styles Different formulations (questions, statements, instructions) can yield different outputs, and experimentation with style and word choice is encouraged5960.
+
+8. Mix up Classes for Few-shot Classification For classification tasks, vary the order of possible response classes in few-shot examples to prevent overfitting61.
+
+9. Adapt to Model Updates Stay informed about model architecture changes and new capabilities, adjusting prompts accordingly62.
+
+10. Experiment with Output Formats For non-creative tasks, structured formats like JSON or XML are beneficial62. Returning JSON can ensure consistent style, focus on data, reduce hallucinations, maintain relationships, provide data types, and allow sorting63.
+
+11. JSON Repair Tools like json-repair can fix incomplete or malformed JSON objects that result from token limit truncations64.
+
+12. Working with Schemas Using JSON Schemas for input defines the expected structure and data types, helping the LLM focus on relevant information and reduce misinterpretation65.
+
+13. Experiment Together with Other Prompt Engineers Collaborate to generate varied prompt attempts, leveraging collective efforts66.
+
+14. CoT Best Practices For Chain of Thought, place the answer after the reasoning, ensure the final answer can be extracted from the reasoning, and set temperature to 037.
+
+15. Document Prompt Attempts Meticulously record prompt attempts, including name, goal, model, configuration settings (temperature, token limit, Top-K, Top-P), the full prompt, and outputs5.... This helps in learning, debugging, and testing prompt performance across model versions68.
+Prompt engineering is an iterative process of crafting, testing, analyzing, and refining prompts based on the model's performance to achieve desired outputs5.
+
